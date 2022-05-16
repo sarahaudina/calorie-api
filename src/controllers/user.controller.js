@@ -1,4 +1,4 @@
-var { addUser, findById, findByProperty, countAll, updateById} = require("../application/use_cases/user.usecases");
+var { addUser, findById, findByProperty, countAll, updateById, deleteById} = require("../application/use_cases/user.usecases");
 
 function userController(
     userRepository,
@@ -71,12 +71,19 @@ function userController(
         .then((message) => res.json(message))
         .catch((error) => next(error));
     };
+
+    const deleteUserById = (req, res, next) => {
+      deleteById(req.params.id, dbRepository)
+        .then(() => res.json({'message':'user sucessfully deleted!'}))
+        .catch((error) => next(error));
+    };
   
     return {
       fetchUsersByProperty,
       fetchUserById,
       addNewUser,
-      updateUserById
+      updateUserById,
+      deleteUserById
     };
   }
 

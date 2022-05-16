@@ -44,12 +44,15 @@ function userRepositoryMongoDB() {
     );
   };
 
+  const deleteById = (id) => UserModel.findByIdAndRemove(id);
+
   return {
     findByProperty,
     countAll,
     findById,
     add,
-    updateById
+    updateById,
+    deleteById
   };
 }
 

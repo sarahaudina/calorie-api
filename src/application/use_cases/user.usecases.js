@@ -66,4 +66,14 @@ function addUser(
     });
   };
 
-  module.exports = {addUser, countAll, findById, findByProperty, updateById}
+
+  function deleteById(id, userRepository) {
+    return userRepository.findByProperty(id).then((user) => {
+      if (!user) {
+        throw new Error(`No user found with id: ${id}`);
+      }
+      return userRepository.deleteById(id);
+    });
+  }
+
+  module.exports = {addUser, countAll, findById, findByProperty, updateById, deleteById}

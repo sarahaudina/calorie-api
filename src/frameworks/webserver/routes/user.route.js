@@ -14,14 +14,14 @@ function userRouter (express) {
       authServiceImpl
     );
   
-    // GET enpdpoints
-    router.route('/:id').get(authMiddleware, controller.fetchUserById);
+    // admin role only
     router.route('/').get([authMiddleware, isAdmin], controller.fetchUsersByProperty);
-  
-    // POST enpdpoints
-    router.route('/').post(controller.addNewUser);    
-
+    router.route('/:id').get([authMiddleware, isAdmin], controller.fetchUserById);
     router.route('/:id').put([authMiddleware, isAdmin], controller.updateUserById);
+    router.route('/:id').delete([authMiddleware, isAdmin], controller.deleteUserById);
+
+    // all roles 
+    router.route('/').post(controller.addNewUser);    
     
     return router;
   }
