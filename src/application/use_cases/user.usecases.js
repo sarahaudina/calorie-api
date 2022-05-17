@@ -1,5 +1,4 @@
 var user = require("../../entities/user");
-const userRepository = require("../repositories/user.repository");
 
 function addUser(
     username,
@@ -48,6 +47,7 @@ function addUser(
     password,
     role,
     monthlyBudget,
+    createdAt,
     dailyCaloryLimit,
     userRepository
   }) {
@@ -55,8 +55,14 @@ function addUser(
       username,
       password,
       role,
+      createdAt,
       monthlyBudget,
-      dailyCaloryLimit });
+      dailyCaloryLimit 
+    });
+
+
+    console.log(id);
+    console.log(username);
 
     return userRepository.findByProperty(id).then((user) => {
       if (!user) {
@@ -64,7 +70,7 @@ function addUser(
       }
       return userRepository.updateById(id, updatedUser);
     });
-  };
+  }
 
 
   function deleteById(id, userRepository) {

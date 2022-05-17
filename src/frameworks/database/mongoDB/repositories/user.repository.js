@@ -30,9 +30,19 @@ function userRepositoryMongoDB() {
 
   const updateById = (id, userEntity) => {
     const updatedUser = new UserModel({
+      // id: id,
+      // username: userEntity.username(),
+      // password: userEntity.password(),
+      // role: userEntity.role(),
+      // createdAt: userEntity.createdAt(),
+      // monthlyBudget: userEntity.monthlyBudget(),
+      // dailyCaloryLimit: userEntity.dailyCaloryLimit()
+
+      id: id,
       username: userEntity.getUserName(),
       password: userEntity.getPassword(),
       role: userEntity.getRole(),
+      createdAt: userEntity.getCreatedAt(),
       monthlyBudget: userEntity.getMonthlyBudget(),
       dailyCaloryLimit: userEntity.getDailyCaloryLimit()
     });

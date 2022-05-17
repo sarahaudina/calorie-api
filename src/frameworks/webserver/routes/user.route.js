@@ -20,7 +20,7 @@ function userRouter (express) {
     router.route('/:id').put([authMiddleware, isAdmin], controller.updateUserById);
     router.route('/:id').delete([authMiddleware, isAdmin], controller.deleteUserById);
 
-    // all roles 
+    // no token needed
     router.route('/').post(controller.addNewUser);    
     
     return router;

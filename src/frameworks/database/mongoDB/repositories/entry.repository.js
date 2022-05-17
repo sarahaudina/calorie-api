@@ -1,4 +1,5 @@
 var EntryModel = require("../models/entry.model");
+var moment = require("moment");
 
 function omit(obj, ...props) {
   const result = { ...obj };
@@ -7,10 +8,27 @@ function omit(obj, ...props) {
 }
 
 function entryRepositoryMongoDB() {
-  const findByProperty = (params) =>
-  EntryModel.find(omit(params, 'page', 'perPage'))
-    .skip(params.perPage * params.page - params.perPage)
-    .limit(params.perPage);
+  const findByProperty = (params) => {
+    var _param = omit(params, 'page', 'perPage');
+    
+    // processing filter by date param
+    if (params.createdAt != null) {
+      _param['createdAt'] = { 
+        $gt: moment(params.createdAt).hours(0).minutes(0).seconds(0).milliseconds(0), 
+        $lt: moment(params.createdAt).hours(24).minutes(0).seconds(0).milliseconds(0)
+      };
+    }
+    if (params.fromDate != null && params.toDate != null) {
+      _param['createdAt'] = { 
+        $gt: moment(params.fromDate).hours(0).minutes(0).seconds(0).milliseconds(0), 
+        $lt: moment(params.toDate).hours(24).minutes(0).seconds(0).milliseconds(0)
+      };
+    }
+
+    return EntryModel.find(_param)
+      .skip(params.perPage * params.page - params.perPage)
+      .limit(params.perPage);
+  }
 
   const countAll = (params) =>
     EntryModel.countDocuments(omit(params, 'page', 'perPage'));

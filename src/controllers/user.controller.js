@@ -57,15 +57,16 @@ function userController(
     };
 
     const updateUserById = (req, res, next) => {
-      const { _id, username, password, role, monthlyBudget, dailyCaloryLimit } = req.body;
-  
+      const { id, username, password, role, createdAt, monthlyBudget, dailyCaloryLimit } = req.body;
+
       updateById({
-        id: _id,
-        username: username,
-        password: password,
-        role: role,
-        monthlyBudget: monthlyBudget,
-        dailyCaloryLimit: dailyCaloryLimit,
+        id,
+        username,
+        password,
+        role,
+        monthlyBudget,
+        createdAt,
+        dailyCaloryLimit,
         dbRepository
       })
         .then((message) => res.json(message))

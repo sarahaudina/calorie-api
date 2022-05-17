@@ -2,9 +2,9 @@ var morgan = require('morgan');
 var compression = require('compression');
 var bodyParser = require('body-parser');
 var helmet = require('helmet');
+var cors = require('cors');
 
 function expressConfig(app) {
-  app.use(helmet());
   app.use(compression());
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(
@@ -22,11 +22,17 @@ function expressConfig(app) {
     );
     res.setHeader(
       'Access-Control-Allow-Headers',
-      'X-Requested-With, Content-type, Authorization, Cache-control, Pragma'
+      '*'
+    );
+    res.setHeader(
+      'Access-Control-Allow-Origin', 
+      '*'
     );
     // Pass to next layer of middleware
     next();
   });
+
+  app.use(cors());
 
   app.use(morgan('combined'));
 }
