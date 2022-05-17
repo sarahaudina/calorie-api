@@ -1,6 +1,7 @@
 var { addEntry, deleteById, findById, findByProperty, findAll, updateById, countAll } = require("../application/use_cases/entry.usecases");
 var entryServiceImpl = require('../frameworks/services/entry.service');
 var entryServiceInterface = require('../application/services/entry.service');
+var moment = require("moment");
 
 function entryController(
   entryRepository,
@@ -52,10 +53,32 @@ function entryController(
 
     params.page = params.page ? parseInt(params.page, 10) : 1;
     params.perPage = params.perPage ? parseInt(params.perPage, 10) : 10;
+    
+    // processing filter by date param
+    if (params.createdAt != null) {
+      params.createdAt = { 
+        $gt: moment(params.createdAt).hours(0).minutes(0).seconds(0).milliseconds(0), 
+        $lt: moment(params.createdAt).hours(24).minutes(0).seconds(0).milliseconds(0)
+      };
+    }
+    if (params.fromDate != null && params.toDate != null) {
+      params.createdAt = { 
+        $gt: moment(params.fromDate).hours(0).minutes(0).seconds(0).milliseconds(0), 
+        $lt: moment(params.toDate).hours(24).minutes(0).seconds(0).milliseconds(0)
+      };
+    }
 
     findByProperty(params, dbRepository)
-      .then((users) => {
-        response.users = users;
+      .then((entries) => {
+        response.entries = entries;
+
+        if (!req.user.isAdmin) {
+          response.dailyBudgetLimitLeft = req.user.monthlyBudget-entryService.countTotalBudgetSpending(entries);
+          response.dailyCaloriesLimitLeft = req.user.dailyCaloryLimit-entryService.countTotalCaloriesConsumption(entries);
+          response.monthlyBudget = req.user.monthlyBudget;
+          response.dailyCaloryLimit = req.user.dailyCaloryLimit;
+        } 
+
         return countAll(params, dbRepository);
       })
       .then((totalItems) => {
@@ -64,6 +87,7 @@ function entryController(
         response.itemsPerPage = params.perPage;
         return res.json(response);
       })
+      
       .catch((error) => next(error));
   };
 
@@ -100,16 +124,6 @@ function entryController(
         params,
         dbRepository
       ).then((entries) => {
-        // calculate total budget spending
-        var totalBudgetSpending = 0;
-        entries.forEach(element => {
-          totalBudgetSpending += element.price ? element.price : 0;
-        });
-        // calculate total calories consumption
-        var totalCaloriesConsumed = 0;
-        entries.forEach(element => {
-          totalCaloriesConsumed += element.calories ? element.calories : 0;
-        });
         // compare total with user's daily limit
         const response = {
           'message': 'entry added',

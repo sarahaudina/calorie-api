@@ -21,9 +21,11 @@ function login(username, password, userRepository, authService) {
       const isAdmin = user[0].role === "admin" ? true : false;
       const payload = {
         user: {
-          id: user[0].id
+          id: user[0].id,
+          dailyCaloryLimit: user[0].dailyCaloryLimit,
+          monthlyBudget: user[0].monthlyBudget  
         },
-        isAdmin: isAdmin
+        isAdmin: isAdmin,
       };
 
       var result = {
