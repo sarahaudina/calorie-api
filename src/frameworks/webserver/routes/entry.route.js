@@ -17,6 +17,7 @@ function entryRouter (express) {
       [authMiddleware, isAdmin],
       controller.fetchEntriesByProperty
     );
+  router.route('/metadata').get([authMiddleware, isAdmin], controller.getEntryMetadata);
   router.route('/:id').put([authMiddleware, isAdmin], controller.updateEntryById);
   router.route('/:id').delete([authMiddleware, isAdmin], controller.deleteEntryById);
 

@@ -159,13 +159,41 @@ function entryController(
       .catch((error) => next(error));
   };
 
+  const getEntryMetadata = (req, res, next) => {
+    const params = {};
+    const response = {};
+
+    // setDateRage prev week 
+    params.createdAt = { 
+      $gt: moment().subtract(14, "days"), 
+      $lt: moment().subtract(7, "days")
+    };
+    
+    countAll(params, dbRepository)
+      .then((countPrevWeek) => {
+        response.countPrevWeek = countPrevWeek;
+        // setDateRage this week
+        req.params.createdAt = { 
+          $gt: moment().subtract(7, "days"), 
+          $lt: moment()
+        }; 
+        return countAll(params, dbRepository);
+      })
+      .then((countLastWeek) => {
+        response.countLastWeek = countLastWeek;
+        return res.json(response);
+      })
+      .catch((error) => next(error));
+  };
+
   return {
     fetchAllEntries,
     addNewEntry,
     fetchEntryById,
     updateEntryById,
     deleteEntryById,
-    fetchEntriesByProperty
+    fetchEntriesByProperty,
+    getEntryMetadata
   };
 }
 
