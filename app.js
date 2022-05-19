@@ -2,7 +2,6 @@ var express = require('express');
 var mongoose = require('mongoose');
 
 var config = require('./src/config/config.js');
-// var config = require('./src/config/config');
 var expressConfig = require('./src/frameworks/webserver/express');
 var routes = require('./src/frameworks/webserver/routes/index.route');
 var serverConfig = require('./src/frameworks/webserver/server');

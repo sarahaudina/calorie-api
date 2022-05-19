@@ -7,7 +7,6 @@ function addUser(
     userRepository,
     authService
   ) {
-    // TODO: add a proper validation (consider using @hapi/joi)
     if (!username || !password) {
       throw new Error('username and password fields cannot be empty');
     }

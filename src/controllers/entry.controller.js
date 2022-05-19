@@ -21,10 +21,8 @@ function entryController(
       }
     }
 
-    // predefined query params (apart from dynamically) for pagination
-    // and current logged in user
-    params.page = params.page ? parseInt(params.page, 10) : 1;
-    params.perPage = params.perPage ? parseInt(params.perPage, 10) : 10;
+    params.page = params.page ? parseInt(params.page, 10) : null;
+    params.perPage = params.perPage ? parseInt(params.perPage, 10) : null;
     params.userId = req.user.id;
 
     findAll(params, dbRepository)
@@ -33,8 +31,8 @@ function entryController(
         return countAll(params, dbRepository);
       }).then((totalItems) => {
         response.totalItems = totalItems;
-        response.totalPages = Math.ceil(totalItems / params.perPage);
-        response.itemsPerPage = params.perPage;
+        response.totalPages = params.perPage==null ? 1 : Math.ceil(totalItems / params.perPage);
+        response.itemsPerPage = params.perPage ?? totalItems;
         return res.json(response);
       })
       .catch((error) => next(error));
@@ -51,8 +49,8 @@ function entryController(
       }
     }
 
-    params.page = params.page ? parseInt(params.page, 10) : 1;
-    params.perPage = params.perPage ? parseInt(params.perPage, 10) : 10;
+    params.page = params.page ? parseInt(params.page, 10) : null;
+    params.perPage = params.perPage ? parseInt(params.perPage, 10) : null;
     
     // processing filter by date param
     if (params.createdAt != null) {
@@ -83,8 +81,8 @@ function entryController(
       })
       .then((totalItems) => {
         response.totalItems = totalItems;
-        response.totalPages = Math.ceil(totalItems / params.perPage);
-        response.itemsPerPage = params.perPage;
+        response.totalPages = params.perPage==null ? 1 : Math.ceil(totalItems / params.perPage);
+        response.itemsPerPage = params.perPage ?? totalItems;
         return res.json(response);
       })
       

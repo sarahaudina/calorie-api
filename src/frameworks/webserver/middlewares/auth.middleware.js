@@ -34,15 +34,14 @@ function verifyUser (req, res, next) {
   if (req.user.isAdmin) {
     next();
   } 
-  // else {
-  //   if (req.query['userId'] === req.user.id) {
-  //     next();
-  //   } 
-  //   else {
-  //     throw new Error('Invalid id');
-  //   }
-  // }
-  next();
+  else {
+    if (req.params.userId === req.user.id) {
+      next();
+    } 
+    else {
+      throw new Error('Invalid id');
+    }
+  }
 }
 
 module.exports = {authMiddleware, isAdmin, verifyUser}
