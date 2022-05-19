@@ -18,12 +18,18 @@ function entryService() {
     };
 
     const averageCaloriesConsumption = (entries) => {
+        if (entries.size==0) {
+          return 0;
+        }
+
+        var count = 0;
         var totalCaloriesConsumed = 0;
         entries.forEach(element => {
+          count+=1;
           totalCaloriesConsumed += element.calories ? element.calories : 0;
         });
 
-        return totalCaloriesConsumed/entries.size;
+        return totalCaloriesConsumed/count;
     };
 
     return {

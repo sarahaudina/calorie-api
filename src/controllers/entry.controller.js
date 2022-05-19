@@ -143,6 +143,8 @@ function entryController(
 
   const updateEntryById = (req, res, next) => {
     const { name, calories, createdAt, userId, price } = req.body;
+    const response = {};
+    const params = {};
 
     updateById({
       id: req.params.id,
@@ -153,8 +155,25 @@ function entryController(
       price: price,
       entryRepository: dbRepository
     })
-      .then((message) => res.json(message))
-      .catch((error) => next(error));
+    .then((message) => {
+      response.message = message;
+
+      // recount user weekly average
+      params.createdAt = { 
+        $gt: moment().subtract(7, "days"), 
+        $lt: moment()
+      };
+      params.userId = userId;
+      return findByProperty(params, dbRepository);
+    })
+    .then((entries) => {
+      return entryService.averageCaloriesConsumption(entries);
+    })
+    .then((userWeeklyAverage) => {
+      response.userWeeklyAverage = userWeeklyAverage;
+      return res.json(response);
+    })
+    .catch((error) => next(error));
   };
 
   const getEntryMetadata = (req, res, next) => {
