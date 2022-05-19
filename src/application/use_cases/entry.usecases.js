@@ -1,5 +1,4 @@
 var entry = require('../../entities/entry');
-var entryRepository = require('../repositories/entry.repository');
 
 function updateById({
     id,
@@ -7,10 +6,21 @@ function updateById({
     calories,
     createdAt,
     userId,
-    price
+    price,
+    entryRepository
   }) {
-    if (!id || !name || !calories || !createdAt || !userId) {
-        throw new Error('Name, calories, create date, and user id cannot be empty');
+    if (!name || !calories || !createdAt || !userId) {
+      throw new Error('Name, calories, creation date, and user id cannot be empty');
+    }
+
+    if (calories < 0) {
+      throw new Error('Calories need to be positive value');
+    }
+
+    if (price!=null) {
+      if (price < 0) {
+        throw new Error('Price need to be positive value');
+      }  
     }
 
     const updatedEntry = entry({ name, calories, createdAt, userId, price });
@@ -54,6 +64,16 @@ function addEntry({
 }) {
     if (!name || !calories || !createdAt || !userId) {
       throw new Error('Name, calories, creation date, and user id cannot be empty');
+    }
+
+    if (calories < 0) {
+      throw new Error('Calories need to be positive value');
+    }
+
+    if (price!=null) {
+      if (price < 0) {
+        throw new Error('Price need to be positive value');
+      }  
     }
 
     const newEntry = entry({ name, calories, createdAt, userId, price });

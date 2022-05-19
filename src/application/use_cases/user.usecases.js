@@ -59,11 +59,7 @@ function addUser(
       dailyCaloryLimit 
     });
 
-
-    console.log(id);
-    console.log(username);
-
-    return userRepository.findByProperty(id).then((user) => {
+    return userRepository.findById(id).then((user) => {
       if (!user) {
         throw new Error(`No user found with id: ${id}`);
       }

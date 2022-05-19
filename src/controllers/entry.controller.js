@@ -142,10 +142,10 @@ function entryController(
   };
 
   const updateEntryById = (req, res, next) => {
-    const { id, name, calories, createdAt, userId, price } = req.body;
+    const { name, calories, createdAt, userId, price } = req.body;
 
     updateById({
-      id: id,
+      id: req.params.id,
       name: name,
       calories: calories,
       userId: userId,
@@ -171,14 +171,14 @@ function entryController(
       .then((countPrevWeek) => {
         response.countPrevWeek = countPrevWeek;
         // setDateRage this week
-        req.params.createdAt = { 
+        params.createdAt = { 
           $gt: moment().subtract(7, "days"), 
           $lt: moment()
         }; 
         return countAll(params, dbRepository);
       })
-      .then((countLastWeek) => {
-        response.countLastWeek = countLastWeek;
+      .then((countThisWeek) => {
+        response.countThisWeek = countThisWeek;
         return res.json(response);
       })
       .catch((error) => next(error));

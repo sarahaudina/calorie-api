@@ -33,11 +33,11 @@ function entryRepositoryMongoDB() {
   const updateById = (id, entry) => {
     const updatedEntry = {
         id: id,
-        name: entry.name(),
-        calories: entry.calories(),
-        createdAt: entry.createdAt(),
-        price: entry.price(),
-        userId: entry.userId()
+        name: entry.getName(),
+        calories: entry.getCalories(),
+        createdAt: entry.getCreatedAt(),
+        price: entry.getPrice(),
+        userId: entry.getUserId()
     };
 
     return EntryModel.findOneAndUpdate(

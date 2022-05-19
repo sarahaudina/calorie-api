@@ -5,6 +5,7 @@ function userRepository(repository) {
     const deleteById = (id) => repository.deleteById(id);
     const countAll = (params) => repository.countAll(params);
     const updateById = (id, user) => repository.updateById(id, user);
+    const findById = (id) => repository.findById(id);
   
     return {
         add,
@@ -12,7 +13,8 @@ function userRepository(repository) {
         findByProperty,
         deleteById,
         countAll,
-        updateById
+        updateById,
+        findById
     };
   }
 

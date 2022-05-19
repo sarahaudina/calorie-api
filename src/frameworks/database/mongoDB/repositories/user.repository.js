@@ -29,19 +29,18 @@ function userRepositoryMongoDB() {
   };
 
   const updateById = (id, userEntity) => {
-    const updatedUser = new UserModel({
-      id: id,
+    var set = {
       username: userEntity.getUserName(),
       password: userEntity.getPassword(),
       role: userEntity.getRole(),
       createdAt: userEntity.getCreatedAt(),
       monthlyBudget: userEntity.getMonthlyBudget(),
       dailyCaloryLimit: userEntity.getDailyCaloryLimit()
-    });
-
-    return UserModel.findOneAndUpdate(
+    };
+    
+    return UserModel.updateOne(
       { _id: id },
-      { $set: updatedUser },
+      { $set: set },
       { new: true }
     );
   };

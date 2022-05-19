@@ -57,17 +57,17 @@ function userController(
     };
 
     const updateUserById = (req, res, next) => {
-      const { id, username, password, role, createdAt, monthlyBudget, dailyCaloryLimit } = req.body;
+      const { username, password, role, createdAt, monthlyBudget, dailyCaloryLimit } = req.body;
 
       updateById({
-        id,
-        username,
-        password,
-        role,
-        monthlyBudget,
-        createdAt,
-        dailyCaloryLimit,
-        dbRepository
+        id: req.params.id,
+        username: username,
+        password: password,
+        role: role,
+        monthlyBudget: monthlyBudget,
+        createdAt: createdAt,
+        dailyCaloryLimit: dailyCaloryLimit,
+        userRepository: dbRepository
       })
         .then((message) => res.json(message))
         .catch((error) => next(error));
@@ -76,6 +76,38 @@ function userController(
     const deleteUserById = (req, res, next) => {
       deleteById(req.params.id, dbRepository)
         .then(() => res.json({'message':'user sucessfully deleted!'}))
+        .catch((error) => next(error));
+    };
+
+    const getUserMetadata = (req, res, next) => {
+      const params = {};
+      const response = {};
+  
+      // setDateRage prev week 
+      params.createdAt = { 
+        $gt: moment().subtract(14, "days"), 
+        $lt: moment().subtract(7, "days")
+      };
+      
+      countAll(params, dbRepository)
+        .then((countPrevWeek) => {
+          response.newUserPrevWeek = countPrevWeek;
+          // setDateRage this week
+          params.createdAt = { 
+            $gt: moment().subtract(7, "days"), 
+            $lt: moment()
+          }; 
+          return countAll(params, dbRepository);
+        })
+        .then((countThisWeek) => {
+          response.newUserThisWeek = countThisWeek;
+          params.createdAt = {}; 
+          return countAll(params, dbRepository);
+        })
+        .then((totalCount) => {
+          response.totalUserCount = totalCount; 
+          return res.json(response);
+        })
         .catch((error) => next(error));
     };
   
