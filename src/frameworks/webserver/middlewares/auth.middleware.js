@@ -35,7 +35,7 @@ function verifyUser (req, res, next) {
     next();
   } 
   else {
-    if (req.params.userId === req.user.id) {
+    if (req.params.user === req.user.id) {
       next();
     } 
     else {

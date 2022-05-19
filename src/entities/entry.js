@@ -2,15 +2,15 @@ function entry({
   name,
   calories,
   createdAt,
-  userId,
-  price
+  user,
+  price,
 }) {
     return {
       getName: () => name,
       getCalories: () => calories,
       getCreatedAt: () => createdAt,
-      getUserId: () => userId,
-      getPrice: () => price
+      getUser: () => user,
+      getPrice: () => price,
     };
 }
 

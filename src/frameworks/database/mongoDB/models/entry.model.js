@@ -9,7 +9,7 @@ const EntriesSchema = new Schema({
         type: 'Date',
         default: Date.now
     },
-    userId: {
+    user: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
@@ -20,11 +20,6 @@ const EntriesSchema = new Schema({
         type: Number
     }
 });
-
-EntriesSchema.index({ userId: 1, title: 1 });
-EntriesSchema.index({ userId: 1, description: 1 });
-EntriesSchema.index({ userId: 1, createdAt: 1 });
-EntriesSchema.index({ userId: 1, isPublished: 1 });
 
 const EntryModel = mongoose.model('Entry', EntriesSchema);
 

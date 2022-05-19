@@ -1,14 +1,19 @@
 var { addEntry, deleteById, findById, findByProperty, findAll, updateById, countAll } = require("../application/use_cases/entry.usecases");
-var entryServiceImpl = require('../frameworks/services/entry.service');
-var entryServiceInterface = require('../application/services/entry.service');
+var updateUserById = require("../application/use_cases/user.usecases").updateById;
+var findUserById = require("../application/use_cases/user.usecases").findById;
+var entryServiceInterface = require("../application/services/entry.service");
+var entryServiceImpl = require("../frameworks/services/entry.service");
 var moment = require("moment");
 
 function entryController(
   entryRepository,
-  entryRepositoryImpl
+  entryRepositoryImpl,
+  userRepositoryInterface,
+  userRepositoryImpl
 ) {
   const dbRepository = entryRepository(entryRepositoryImpl());
   const entryService = entryServiceInterface(entryServiceImpl());
+  const userRepository = userRepositoryInterface(userRepositoryImpl());
 
   // Fetch all entries of the logged in user
   const fetchAllEntries = (req, res, next) => {
@@ -23,7 +28,7 @@ function entryController(
 
     params.page = params.page ? parseInt(params.page, 10) : null;
     params.perPage = params.perPage ? parseInt(params.perPage, 10) : null;
-    params.userId = req.user.id;
+    params.user = req.user.id;
 
     findAll(params, dbRepository)
       .then((entries) => {
@@ -101,36 +106,53 @@ function entryController(
   };
 
   const addNewEntry = (req, res, next) => {
-    const { name, calories, createdAt, userId, price } = req.body;
+    const { name, calories, createdAt, user, price } = req.body;
+    const params = { };
+    const response = { };
 
     addEntry({
       name,
       calories,
-      userId: req.user.isAdmin ? userId : req.user.id,
+      user: user,
       createdAt,
       price: price ? price : null,
       entryRepository: dbRepository
     })
     .then((entry) => {
       // fetch user todays entries
-      const params = {
-        userId: req.user.isAdmin ? userId : req.user.id,
-        createdAt: new Date().getDate()
-      };
+      params.user = user;
 
       findByProperty(
         params,
         dbRepository
       ).then((entries) => {
         // compare total with user's daily limit
-        const response = {
-          'message': 'entry added',
-          'dailyBudgetLimit': 2500-entryService.countTotalBudgetSpending(entries),
-          'dailyCaloriesLimit': 2500-entryService.countTotalCaloriesConsumption(entries)
-        };
+        response.message = 'entry added';
+        response.dailyBudgetLimit = 2500-entryService.countTotalBudgetSpending(entries);
+        response.dailyCaloriesLimit = 2500-entryService.countTotalCaloriesConsumption(entries);
   
-        return res.json(response);
+        // recount user weekly average
+        return entryService.averageCaloriesConsumption(entries);
       })
+      .then((userWeeklyAverage) => {
+        response.userWeeklyAverage = userWeeklyAverage;
+        return findUserById(user, userRepository);
+      })
+      .then((user) => {
+        return updateUserById({
+          'id': user._id,
+          'username': user.username,
+          'role': user.role,
+          'monthlyBudget': user.monthlyBudget,
+          'createdAt': user.createdAt,
+          'dailyCaloryLimit': user.dailyCaloryLimit,
+          'weeklyAverage': response.userWeeklyAverage,
+          'userRepository': userRepository
+        });
+      })
+      .then((_) => {
+        return res.json(response);
+      });
     })
     .catch((error) => next(error));
   };
@@ -142,7 +164,7 @@ function entryController(
   };
 
   const updateEntryById = (req, res, next) => {
-    const { name, calories, createdAt, userId, price } = req.body;
+    const { name, calories, createdAt, user, price } = req.body;
     const response = {};
     const params = {};
 
@@ -150,7 +172,7 @@ function entryController(
       id: req.params.id,
       name: name,
       calories: calories,
-      userId: userId,
+      user: user,
       createdAt: createdAt,
       price: price,
       entryRepository: dbRepository
@@ -163,7 +185,7 @@ function entryController(
         $gt: moment().subtract(7, "days"), 
         $lt: moment()
       };
-      params.userId = userId;
+      params.user = user;
       return findByProperty(params, dbRepository);
     })
     .then((entries) => {
@@ -171,7 +193,22 @@ function entryController(
     })
     .then((userWeeklyAverage) => {
       response.userWeeklyAverage = userWeeklyAverage;
-      return res.json(response);
+      return findUserById(user, userRepository);
+    })
+    .then((user) => {
+      return updateUserById({
+        id: user._id,
+        username: user.username,
+        role: user.role,
+        monthlyBudget: user.monthlyBudget,
+        createdAt: user.createdAt,
+        dailyCaloryLimit: user.dailyCaloryLimit,
+        weeklyAverage: response.userWeeklyAverage,
+        userRepository: userRepository
+      });
+    })
+    .then((_) => {
+        return res.json(response);
     })
     .catch((error) => next(error));
   };

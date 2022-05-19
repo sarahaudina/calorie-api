@@ -29,18 +29,9 @@ function userRepositoryMongoDB() {
   };
 
   const updateById = (id, userEntity) => {
-    var set = {
-      username: userEntity.getUserName(),
-      password: userEntity.getPassword(),
-      role: userEntity.getRole(),
-      createdAt: userEntity.getCreatedAt(),
-      monthlyBudget: userEntity.getMonthlyBudget(),
-      dailyCaloryLimit: userEntity.getDailyCaloryLimit()
-    };
-    
-    return UserModel.updateOne(
+    return UserModel.findByIdAndUpdate(
       { _id: id },
-      { $set: set },
+      { $set: userEntity.getUserName() },
       { new: true }
     );
   };

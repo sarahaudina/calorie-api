@@ -5,11 +5,11 @@ function updateById({
     name,
     calories,
     createdAt,
-    userId,
+    user,
     price,
     entryRepository
   }) {
-    if (!name || !calories || !createdAt || !userId) {
+    if (!name || !calories || !createdAt || !user) {
       throw new Error('Name, calories, creation date, and user id cannot be empty');
     }
 
@@ -23,7 +23,7 @@ function updateById({
       }  
     }
 
-    const updatedEntry = entry({ name, calories, createdAt, userId, price });
+    const updatedEntry = entry({ name, calories, createdAt, user, price });
   
     return entryRepository.findById(id).then((foundEntry) => {
       if (!foundEntry) {
@@ -58,11 +58,11 @@ function addEntry({
     name,
     calories,
     createdAt,
-    userId,
+    user,
     price,
     entryRepository
 }) {
-    if (!name || !calories || !createdAt || !userId) {
+    if (!name || !calories || !createdAt || !user) {
       throw new Error('Name, calories, creation date, and user id cannot be empty');
     }
 
@@ -76,9 +76,10 @@ function addEntry({
       }  
     }
 
-    const newEntry = entry({ name, calories, createdAt, userId, price });
+    const newEntry = entry({ name, calories, createdAt, user, price });
 
     return entryRepository.add(newEntry);
+
 }
 
 function countAll(params, entryRepository) {

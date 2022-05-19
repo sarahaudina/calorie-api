@@ -43,26 +43,28 @@ function addUser(
   function updateById({
     id,
     username,
-    password,
     role,
     monthlyBudget,
     createdAt,
     dailyCaloryLimit,
+    weeklyAverage,
     userRepository
   }) {
     const updatedUser = user({ 
-      username,
-      password,
-      role,
-      createdAt,
-      monthlyBudget,
-      dailyCaloryLimit 
+      username: username,
+      password: '',
+      role: role,
+      createdAt: createdAt,
+      monthlyBudget: monthlyBudget,
+      weeklyAverage: weeklyAverage,
+      dailyCaloryLimit: dailyCaloryLimit 
     });
 
     return userRepository.findById(id).then((user) => {
       if (!user) {
         throw new Error(`No user found with id: ${id}`);
       }
+
       return userRepository.updateById(id, updatedUser);
     });
   }

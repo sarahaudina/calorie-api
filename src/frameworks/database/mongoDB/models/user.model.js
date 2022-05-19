@@ -3,8 +3,7 @@ var mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const UserSchema = new Schema({
   username: {
-    type: String,
-    unique: true
+    type: String
   },
   password: {
     type: String
@@ -13,7 +12,9 @@ const UserSchema = new Schema({
     type: String,
     default: 'test_user'
   },
-  createdAt: Date,
+  createdAt: {
+    type: Date
+  },
   monthlyBudget: {
     type: Number,
     default: 1000
@@ -21,10 +22,12 @@ const UserSchema = new Schema({
   dailyCaloryLimit: {
     type: Number,
     default: 2100
+  },
+  weeklyAverage: {
+    type: Number,
+    default: 0
   }
 });
-
-UserSchema.index({ role: 1 });
 
 const UserModel = mongoose.model('User', UserSchema);
 
