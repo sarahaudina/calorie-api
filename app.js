@@ -18,7 +18,10 @@ expressConfig(app);
 serverConfig(app, mongoose, server, config).startServer();
 
 // mongoDB configuration and start connection
-mongoDbConnection(mongoose, config).connectToMongo();
+mongoDbConnection(mongoose, config, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }).connectToMongo();
 
 // routes for each endpoint
 routes(app, express);
