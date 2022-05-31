@@ -11,6 +11,7 @@ function omit(obj, ...props) {
 function entryRepositoryMongoDB() {
   const findByProperty = (params) => {
     return EntryModel.find(params)
+      .sort({createdAt:-1})
       .populate('user')
       .skip(params.perPage * params.page - params.perPage)
       .limit(params.perPage);

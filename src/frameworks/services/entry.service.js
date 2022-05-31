@@ -1,3 +1,4 @@
+const { use } = require("express/lib/application");
 var moment = require("moment");
 
 function entryService() {
@@ -46,10 +47,52 @@ function entryService() {
         return totalCaloriesConsumed/count;
     };
 
+    const countThisWeekEntry = (entries) => {
+      var count = 0;
+      var now = moment(new Date());
+      entries.forEach(element => {
+        if (moment.duration(now.diff(element.createdAt)).asHours() <= 7*24) {
+          count+=1;
+        }
+      });
+
+      return count;
+    };
+
+    const countPreviousWeekEntry = (entries) => {
+      var count = 0;
+      var now = moment(new Date());
+      entries.forEach(element => {
+        var hrDiff = moment.duration(now.diff(element.createdAt)).asHours(); 
+        if (hrDiff < 14*24 && hrDiff >7*24) {
+          count+=1;
+        }
+      });
+
+      return count;
+    };
+
+    const countLastWeekActiveUser = (entries) => {
+      const users = [];
+      var now = moment(new Date());
+      entries.forEach(element => {
+        if (moment.duration(now.diff(element.createdAt)).asHours() <= 7*24) {
+          if (!users.includes(element.user._id)) {
+            users.push(element.user._id);
+          }
+        }
+      });
+
+      return users.length;
+    };
+
     return {
         countTotalBudgetSpending,
         countTotalCaloriesConsumption,
-        averageCaloriesConsumption
+        averageCaloriesConsumption,
+        countPreviousWeekEntry,
+        countThisWeekEntry,
+        countLastWeekActiveUser
     };
 
 }

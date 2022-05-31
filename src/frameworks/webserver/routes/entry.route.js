@@ -19,7 +19,7 @@ function entryRouter (express) {
     .route('/')
     .get(
       [authMiddleware, isAdmin],
-      controller.fetchEntriesByProperty
+      controller.fetchAllEntries
     );
   router.route('/metadata').get([authMiddleware, isAdmin], controller.getEntryMetadata);
   router.route('/:id').put([authMiddleware, isAdmin], controller.updateEntryById);

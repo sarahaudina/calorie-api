@@ -26,9 +26,8 @@ function entryController(
       }
     }
 
-    params.page = params.page ? parseInt(params.page, 10) : null;
-    params.perPage = params.perPage ? parseInt(params.perPage, 10) : null;
-    params.user = req.user.id;
+    params.page = params.page ? parseInt(params.page, 10) : 1;
+    params.perPage = params.perPage ? parseInt(params.perPage, 10) : 10;
 
     findAll(params, dbRepository)
       .then((entries) => {
@@ -90,7 +89,6 @@ function entryController(
         response.itemsPerPage = params.perPage ?? totalItems;
         return res.json(response);
       })
-      
       .catch((error) => next(error));
   };
 
@@ -217,27 +215,18 @@ function entryController(
     const params = {};
     const response = {};
 
-    // setDateRage prev week 
-    params.createdAt = { 
-      $gt: moment().subtract(14, "days"), 
-      $lt: moment().subtract(7, "days")
-    };
     
-    countAll(params, dbRepository)
-      .then((countPrevWeek) => {
-        response.countPrevWeek = countPrevWeek;
-        // setDateRage this week
-        params.createdAt = { 
-          $gt: moment().subtract(7, "days"), 
-          $lt: moment()
-        }; 
-        return countAll(params, dbRepository);
-      })
-      .then((countThisWeek) => {
-        response.countThisWeek = countThisWeek;
+    findAll(params, dbRepository)
+      .then((entries) => {
+        response.countLastWeek = entryService.countThisWeekEntry(entries);
+        response.countPrevWeek = entryService.countPreviousWeekEntry(entries);
+        response.totalItems = entries.length;
+        response.averageLastWeekInput = entryService.averageCaloriesConsumption(entries);
+        response.lastWeekActiveUsers = entryService.countLastWeekActiveUser(entries);
         return res.json(response);
       })
       .catch((error) => next(error));
+
   };
 
   return {

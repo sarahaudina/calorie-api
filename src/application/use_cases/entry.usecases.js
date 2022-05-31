@@ -42,7 +42,7 @@ function findById(id, entryRepository) {
 }
 
 function findAll(params, entryRepository) {
-    return entryRepository.findAll(params);
+    return entryRepository.findByProperty(params);
 }
 
 function deleteById(id, entryRepository) {

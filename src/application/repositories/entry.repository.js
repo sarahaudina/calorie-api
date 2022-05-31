@@ -1,7 +1,6 @@
 function entryRepository(repository) {
     const add = (post) => repository.add(post);
     const findById = (id) => repository.findById(id);
-    const findAll = (params) => repository.findAll(params);
     const findByProperty = (params) => repository.findByProperty(params);
     const updateById = (id, post) => repository.updateById(id, post);
     const deleteById = (id) => repository.deleteById(id);
@@ -10,7 +9,6 @@ function entryRepository(repository) {
     return {
         add,
         findById,
-        findAll,
         findByProperty,
         updateById,
         deleteById,
